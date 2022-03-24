@@ -16,27 +16,27 @@
   \***********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _client_workers_createWorkers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./client/workers/createWorkers */ \"./src/client/workers/createWorkers.js\");\n\nsetInterval(function () {\n    var indicator = document.getElementById('indicator');\n    indicator.innerHTML = indicator.innerHTML ? '' : '.';\n}, 1000);\nvar workerNum = (navigator || {}).hardwareConcurrency || 6;\nconsole.log(\"Will create \".concat(workerNum, \" workers.\"));\nnew Array(workerNum).fill(0).forEach(function () { return (0,_client_workers_createWorkers__WEBPACK_IMPORTED_MODULE_0__.createWorker)(); });\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _client_workers_createCpuWorkers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./client/workers/createCpuWorkers */ \"./src/client/workers/createCpuWorkers.js\");\n\nsetInterval(function () {\n    var indicator = document.getElementById('indicator');\n    indicator.innerHTML = indicator.innerHTML ? '' : '.';\n}, 1000);\nvar workerNum = (navigator || {}).hardwareConcurrency || 6;\nconsole.log(\"Will create \".concat(workerNum, \" CPU workers.\"));\nnew Array(workerNum).fill(0).forEach(function () { return (0,_client_workers_createCpuWorkers__WEBPACK_IMPORTED_MODULE_0__.createCpuWorker)(); });\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client.ts?");
 
 /***/ }),
 
-/***/ "./src/client/workers/playLearnerGame.worker.js":
-/*!******************************************************!*\
-  !*** ./src/client/workers/playLearnerGame.worker.js ***!
-  \******************************************************/
+/***/ "./src/client/workers/playLearnerGameCpu.worker.js":
+/*!*********************************************************!*\
+  !*** ./src/client/workers/playLearnerGameCpu.worker.js ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Worker_fn)\n/* harmony export */ });\nfunction Worker_fn() {\n  return new Worker(__webpack_require__.p + \"bundle.worker.js\");\n}\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client/workers/playLearnerGame.worker.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Worker_fn)\n/* harmony export */ });\nfunction Worker_fn() {\n  return new Worker(__webpack_require__.p + \"bundle.worker.js\");\n}\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client/workers/playLearnerGameCpu.worker.js?");
 
 /***/ }),
 
-/***/ "./src/client/workers/createWorkers.js":
-/*!*********************************************!*\
-  !*** ./src/client/workers/createWorkers.js ***!
-  \*********************************************/
+/***/ "./src/client/workers/createCpuWorkers.js":
+/*!************************************************!*\
+  !*** ./src/client/workers/createCpuWorkers.js ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"createWorker\": () => (/* binding */ createWorker)\n/* harmony export */ });\n/* harmony import */ var _playLearnerGame_worker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./playLearnerGame.worker.js */ \"./src/client/workers/playLearnerGame.worker.js\");\n\nconst createWorker = () => new _playLearnerGame_worker_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]();\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client/workers/createWorkers.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"createCpuWorker\": () => (/* binding */ createCpuWorker)\n/* harmony export */ });\n/* harmony import */ var _playLearnerGameCpu_worker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./playLearnerGameCpu.worker.js */ \"./src/client/workers/playLearnerGameCpu.worker.js\");\n\nconst createCpuWorker = () => new _playLearnerGameCpu_worker_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]();\n\n\n//# sourceURL=webpack://chss-service-workers/./src/client/workers/createCpuWorkers.js?");
 
 /***/ })
 
