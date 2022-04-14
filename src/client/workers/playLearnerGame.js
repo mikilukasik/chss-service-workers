@@ -285,12 +285,12 @@ export const init = ({ backend = 'wasm' } = {}) => {
         rIndex >= records.length - 1 ||
         (inTrainingLost &&
           inTrainingMoved &&
-          Math.abs(actual) >= 0.1 &&
+          // Math.abs(actual) >= 0.02 &&
           // (rIndex + 4 > balances.length ||
-          // actual <= -0.02 &&
-          (rIndex + 6 > balances.length ||
-            (whiteInTraining && balances[rIndex + 6] < balances[rIndex]) ||
-            (!whiteInTraining && balances[rIndex + 6] > balances[rIndex])));
+          actual <= -0.1 &&
+          (rIndex + 2 > balances.length ||
+            (whiteInTraining && balances[rIndex + 2] < balances[rIndex]) ||
+            (!whiteInTraining && balances[rIndex + 2] > balances[rIndex])));
       //|| actual >= 0.2);
       // inTrainingMoved && (actual < -0.3 || actual > -0.4);
 
