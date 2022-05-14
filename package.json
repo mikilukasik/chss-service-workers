@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_OPTIONS=--max_old_space_size=4096 webpack --no-devtool",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 webpack --no-devtool --stats-children",
     "start": "NODE_OPTIONS=--max_old_space_size=4096 webpack && node start.js",
     "dev": "NODE_OPTIONS=--max_old_space_size=4096 webpack w --mode=development & nodemon start.js"
   },
