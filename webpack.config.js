@@ -5,14 +5,10 @@ module.exports = [
     entry: './src/clientController.ts',
     module: {
       rules: [
-        // {
-        //   test: /\.worker\.js$/,
-        //   use: { loader: 'worker-loader' },
-        // },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /assembly/],
         },
       ],
     },
@@ -23,6 +19,9 @@ module.exports = [
       filename: 'clientControllerBundle.js',
       path: path.resolve(__dirname, 'public'),
     },
+    experiments: {
+      topLevelAwait: true,
+    },
   },
   {
     entry: './src/client.ts',
@@ -31,11 +30,12 @@ module.exports = [
         {
           test: /\.worker\.js$/,
           use: { loader: 'worker-loader' },
+          exclude: [/node_modules/, /assembly/],
         },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /assembly/],
         },
       ],
     },
@@ -46,6 +46,9 @@ module.exports = [
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'public'),
     },
+    experiments: {
+      topLevelAwait: true,
+    },
   },
   {
     entry: './src/clientGpu.ts',
@@ -54,11 +57,12 @@ module.exports = [
         {
           test: /\.worker\.js$/,
           use: { loader: 'worker-loader' },
+          exclude: [/node_modules/, /assembly/],
         },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /assembly/],
         },
       ],
     },
@@ -69,6 +73,9 @@ module.exports = [
       filename: 'bundleGpu.js',
       path: path.resolve(__dirname, 'public'),
     },
+    experiments: {
+      topLevelAwait: true,
+    },
   },
   {
     entry: './src/trainer.ts',
@@ -77,11 +84,12 @@ module.exports = [
         {
           test: /\.worker\.js$/,
           use: { loader: 'worker-loader' },
+          exclude: [/node_modules/, /assembly/],
         },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /assembly/],
         },
       ],
     },
@@ -92,6 +100,9 @@ module.exports = [
       filename: 'trainer.js',
       path: path.resolve(__dirname, 'public'),
     },
+    experiments: {
+      topLevelAwait: true,
+    },
   },
   {
     entry: './src/aiClient.ts',
@@ -100,11 +111,18 @@ module.exports = [
         {
           test: /\.worker\.js$/,
           use: { loader: 'worker-loader' },
+          exclude: [/node_modules/, /assembly/],
         },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /assembly/],
+        },
+        {
+          test: /\.wasm$/,
+          // Tells webpack how to interpret wasm files into JavaScript-land
+          type: 'javascript/auto',
+          loader: 'wasm-loader',
         },
       ],
     },
@@ -114,6 +132,11 @@ module.exports = [
     output: {
       filename: 'aiClient.js',
       path: path.resolve(__dirname, 'public'),
+    },
+    experiments: {
+      topLevelAwait: true,
+      asyncWebAssembly: true,
+      syncWebAssembly: true,
     },
   },
 ];

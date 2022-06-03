@@ -5,9 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_OPTIONS=--max_old_space_size=4096 webpack --no-devtool --stats-children",
-    "start": "NODE_OPTIONS=--max_old_space_size=4096 webpack && node start.js",
-    "dev": "NODE_OPTIONS=--max_old_space_size=4096 webpack w --mode=development & nodemon start.js"
+    "build": "NODE_OPTIONS=--max_old_space_size=6000 webpack --no-devtool --stats-children",
+    "start": "NODE_OPTIONS=--max_old_space_size=6000 webpack && node start.js",
+    "dev": "NODE_OPTIONS=--max_old_space_size=6000 webpack w --mode=development --stats-children & nodemon start.js"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,8 @@
     "@tensorflow/tfjs": "^3.12.0",
     "@tensorflow/tfjs-backend-wasm": "^3.12.0",
     "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "wasm-loader": "^1.3.0"
   },
   "devDependencies": {
     "@babel/register": "^7.13.16",
