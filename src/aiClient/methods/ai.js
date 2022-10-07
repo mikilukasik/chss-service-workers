@@ -2,9 +2,12 @@ import { getMoveEvaluator } from '../../../../chss-module-engine/src/engine_new/
 import { minimax } from '../../../../chss-module-engine/src/engine_new/minimax/minimax.js';
 import { move2moveString } from '../../../../chss-module-engine/src/engine_new/transformers/move2moveString.js';
 import { getMovedBoard } from '../../../../chss-module-engine/src/engine_new/utils/getMovedBoard.js';
+// import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
 
 const localSingleThread = async ({ board, depth, moves }) => {
   if (depth < 1) return;
+
+  // const { minimax, getMovedBoard } = await getWasmEngine();
 
   const started = Date.now();
 
@@ -24,6 +27,7 @@ const localSingleThread = async ({ board, depth, moves }) => {
     for (const move of sortedMoves) {
       const moveAiValue = moveEvaluator(move) / 3;
       const movedBoard = getMovedBoard(move, board);
+      // const [, nmVal] = minimax(movedBoard, depth - 1, value, 99999, moveAiValue);
       const nmVal = await minimax(movedBoard, depth - 1, value, 99999, moveAiValue);
 
       if (nmVal > value) {
@@ -46,6 +50,7 @@ const localSingleThread = async ({ board, depth, moves }) => {
   for (const move of sortedMoves) {
     const moveAiValue = moveEvaluator(move) / -3;
     const movedBoard = getMovedBoard(move, board);
+    // const [, nmVal] = minimax(movedBoard, depth - 1, -99999, value, moveAiValue);
     const nmVal = await minimax(movedBoard, depth - 1, -99999, value, moveAiValue);
 
     if (nmVal < value) {
