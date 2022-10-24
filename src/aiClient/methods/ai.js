@@ -21,14 +21,14 @@ const localSingleThread = async ({ board, depth, moves }) => {
     .map((i) => moves[i]);
 
   if (board[64]) {
-    let value = -99999;
+    let value = -999999;
     let winningMove;
 
     for (const move of sortedMoves) {
       const moveAiValue = moveEvaluator(move) / 3;
       const movedBoard = getMovedBoard(move, board);
-      // const [, nmVal] = minimax(movedBoard, depth - 1, value, 99999, moveAiValue);
-      const nmVal = await minimax(movedBoard, depth - 1, value, 99999, moveAiValue);
+      // const [, nmVal] = minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
+      const nmVal = await minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
 
       if (nmVal > value) {
         value = nmVal;
@@ -44,14 +44,14 @@ const localSingleThread = async ({ board, depth, moves }) => {
     };
   }
 
-  let value = 99999;
+  let value = 999999;
   let winningMove;
 
   for (const move of sortedMoves) {
     const moveAiValue = moveEvaluator(move) / -3;
     const movedBoard = getMovedBoard(move, board);
-    // const [, nmVal] = minimax(movedBoard, depth - 1, -99999, value, moveAiValue);
-    const nmVal = await minimax(movedBoard, depth - 1, -99999, value, moveAiValue);
+    // const [, nmVal] = minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
+    const nmVal = await minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
 
     if (nmVal < value) {
       value = nmVal;
