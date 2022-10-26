@@ -1,5 +1,19 @@
 import { getNextSpinnerChar } from './helpers/asciiSpinner.js';
 import { createWorker } from './aiClient/workers/createWorkers';
+import { getWasmEngine } from '../chss-module-engine/src/engine_new/utils/wasmEngine.js';
+import { evaluateBoard } from '../chss-module-engine/src/engine_new/evaluators/evaluateBoard_new.js';
+
+getWasmEngine()
+  .then((we) => {
+    console.log('amottan', { we });
+    // @ts-expect-error we
+    window.top.we = we;
+    // @ts-expect-error we
+    window.top.evaluateBoard = evaluateBoard;
+  })
+  .catch((e) => {
+    console.error('itten', e);
+  });
 
 setInterval(() => {
   const indicator = document.getElementById('indicator');

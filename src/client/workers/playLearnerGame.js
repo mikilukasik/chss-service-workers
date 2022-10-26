@@ -9,7 +9,7 @@ import { getPieceBalance } from '../../../chss-module-engine/src/engine_new/util
 import { msgClient as msg } from '../../../msg/src/client';
 
 export const init = ({ backend = 'wasm' } = {}) => {
-  console.log(`initializing tfjs, will try to use backend: ${backend}`);
+  // console.log(`initializing tfjs, will try to use backend: ${backend}`);
 
   let models = {};
   let modelsLoading = {};
@@ -37,7 +37,7 @@ export const init = ({ backend = 'wasm' } = {}) => {
   });
 
   learnerSocket.on('init', (data, comms) => {
-    console.log('initializing');
+    // console.log('initializing');
     comms.send({ success: true });
   });
 
@@ -49,7 +49,7 @@ export const init = ({ backend = 'wasm' } = {}) => {
     if (!wasmInited && backend === 'wasm')
       await tf.setBackend('wasm').then((success) => {
         wasmInited = success;
-        console.log(`wasm init success: ${success}`);
+        // console.log(`wasm init success: ${success}`);
         // console.log(`Using backenf: ${tf.getBackend()}`);
       }, console.error);
   };

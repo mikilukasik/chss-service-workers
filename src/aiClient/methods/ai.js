@@ -1,13 +1,14 @@
 import { getMoveEvaluator } from '../../../../chss-module-engine/src/engine_new/moveGenerators/getMoveEvaluator.js';
-import { minimax } from '../../../../chss-module-engine/src/engine_new/minimax/minimax.js';
+// import { minimax } from '../../../../chss-module-engine/src/engine_new/minimax/minimax.js';
 import { move2moveString } from '../../../../chss-module-engine/src/engine_new/transformers/move2moveString.js';
-import { getMovedBoard } from '../../../../chss-module-engine/src/engine_new/utils/getMovedBoard.js';
-// import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
+// import { getMovedBoard } from '../../../../chss-module-engine/src/engine_new/utils/getMovedBoard.js';
+import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
 
 const localSingleThread = async ({ board, depth, moves }) => {
+  // console.log('hello');
   if (depth < 1) return;
 
-  // const { minimax, getMovedBoard } = await getWasmEngine();
+  const { minimax, getMovedBoard } = await getWasmEngine();
 
   const started = Date.now();
 
@@ -27,9 +28,9 @@ const localSingleThread = async ({ board, depth, moves }) => {
     for (const move of sortedMoves) {
       const moveAiValue = moveEvaluator(move) / 3;
       const movedBoard = getMovedBoard(move, board);
-      // const [, nmVal] = minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
-      const nmVal = await minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
-
+      const [, nmVal] = minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
+      // const nmVal = await minimax(movedBoard, depth - 1, value, 999999, moveAiValue);
+      console.log({ nmVal, moveAiValue });
       if (nmVal > value) {
         value = nmVal;
         winningMove = move;
@@ -50,8 +51,8 @@ const localSingleThread = async ({ board, depth, moves }) => {
   for (const move of sortedMoves) {
     const moveAiValue = moveEvaluator(move) / -3;
     const movedBoard = getMovedBoard(move, board);
-    // const [, nmVal] = minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
-    const nmVal = await minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
+    const [, nmVal] = minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
+    // const nmVal = await minimax(movedBoard, depth - 1, -999999, value, moveAiValue);
 
     if (nmVal < value) {
       value = nmVal;
