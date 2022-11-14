@@ -14,10 +14,10 @@ const deepMoveSorters = [
   { modelName: 'pg_tiny', cutoff: 0 /*, cutoff: 0.042*/ },
 ];
 
-const predictionSocket = msgClient.ws(`ws://${self.location.hostname}:3300/predictionSocket`);
+const engineSocket = msgClient.ws(`ws://${self.location.hostname}:3300/engineSocket`);
 
 export const getMoveEvaluator = async ({ game }) => {
-  const response = await predictionSocket.do('predictMove', { game, modelName });
+  const response = await engineSocket.do('predictMove', { game, modelName });
   return (move) => response.moveValues[move];
 };
 
