@@ -1,7 +1,11 @@
 import { getNextSpinnerChar } from './helpers/asciiSpinner.js';
-import { createWorker } from './aiClient/workers/createWorkers';
-import { getWasmEngine } from '../chss-module-engine/src/engine_new/utils/wasmEngine.js';
-import { evaluateBoard } from '../chss-module-engine/src/engine_new/evaluators/evaluateBoard_new.js';
+import { createMainWorker, createSubWorker } from './aiClient/workers/createWorkers';
+
+const subWorkerCount = Math.max(2, (navigator.hardwareConcurrency || 5) - 1);
+console.log(`aiClient will create ${subWorkerCount} subWorkers.`);
+
+// import { getWasmEngine } from '../chss-module-engine/src/engine_new/utils/wasmEngine.js';
+// import { evaluateBoard } from '../chss-module-engine/src/engine_new/evaluators/evaluateBoard_new.js';
 
 // getWasmEngine()
 //   .then((we) => {
@@ -20,9 +24,19 @@ setInterval(() => {
   indicator.innerHTML = getNextSpinnerChar(indicator.innerHTML || '|');
 }, 50);
 
-const workers = {
-  mainWorker: createWorker(),
+const workers: Record<string, Worker> = {
+  mainWorker: createMainWorker(),
 };
+
+for (let subWorkerIndex = 0; subWorkerIndex < subWorkerCount; subWorkerIndex += 1) {
+  const key = `subWorker${subWorkerIndex}`;
+  workers[key] = createSubWorker();
+
+  const channel = new MessageChannel();
+
+  workers[key].postMessage({ cmd: 'connectMainWorker' }, [channel.port1]);
+  workers.mainWorker.postMessage({ cmd: 'connectSubWorker' }, [channel.port2]);
+}
 
 Object.values(workers).forEach((worker) => {
   worker.onmessage = async ({ data: rawData }: { data: any }) => {
