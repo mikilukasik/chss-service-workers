@@ -20,7 +20,7 @@ export const connectSubWorker = async (data, id, ports) => {
 
       const onMessageHandlers = {
         response: ({ id, data }) => {
-          waitingResolvers[id](data);
+          waitingResolvers[id]({ data, id });
           delete waitingResolvers[id];
 
           const alreadyWaiting = subWorkerAwaiters.shift();
@@ -46,10 +46,13 @@ export const connectSubWorker = async (data, id, ports) => {
   );
 };
 
-export const doOnSubWorker = async (cmd, data) => {
+export const doOnSubWorker = async (cmd, data, cb = () => {}) => {
   const worker = await getNextAvailableSubWorker();
   const id = Math.random();
 
   worker.port.postMessage({ cmd, data, id });
+
+  cb({ worker, id });
+
   return new Promise((r) => (worker.waitingResolvers[id] = r));
 };

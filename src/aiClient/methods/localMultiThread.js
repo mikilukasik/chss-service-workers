@@ -39,6 +39,13 @@ export const localMultiThread = async ({ depth, game }) => {
 
   let winningMove;
   let pieceValue;
+  const busyWorkers = {};
+
+  const instructBusyWorkers = (cmd, data) => {
+    Object.keys(busyWorkers).forEach((id) => {
+      busyWorkers[id].port.postMessage({ cmd, data, id });
+    });
+  };
 
   if (board[64]) {
     let value = -999999;
@@ -64,10 +71,16 @@ export const localMultiThread = async ({ depth, game }) => {
         };
         minimaxParamsArr.push(params);
 
-        return doOnSubWorker('minimax', params).then((nmVal) => {
+        return doOnSubWorker('minimax', params, ({ worker, id }) => {
+          busyWorkers[id] = worker;
+        }).then(({ data: nmVal, id }) => {
+          delete busyWorkers[id];
+
           if (nmVal > value) {
             value = nmVal;
+            instructBusyWorkers('setAlpha', nmVal);
             minimaxParamsArr.forEach((p) => (p.alpha = nmVal));
+
             pieceValue = nmVal - moveAiValue;
             winningMove = move;
           }
@@ -108,10 +121,16 @@ export const localMultiThread = async ({ depth, game }) => {
       };
       minimaxParamsArr.push(params);
 
-      return doOnSubWorker('minimax', params).then((nmVal) => {
+      return doOnSubWorker('minimax', params, ({ worker, id }) => {
+        busyWorkers[id] = worker;
+      }).then(({ data: nmVal, id }) => {
+        delete busyWorkers[id];
+
         if (nmVal < value) {
           value = nmVal;
+          instructBusyWorkers('setBeta', nmVal);
           minimaxParamsArr.forEach((p) => (p.beta = nmVal));
+
           pieceValue = nmVal - moveAiValue;
           winningMove = move;
         }

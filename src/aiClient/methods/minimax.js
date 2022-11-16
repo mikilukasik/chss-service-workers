@@ -6,6 +6,8 @@ import { getMovedBoard } from '../../../chss-module-engine/src/engine_new/utils/
 import { isCaptured } from '../../../chss-module-engine/src/engine_new/utils/isCaptured.js';
 import { getPrediction } from '../../../chss-module-engine/src/engine_new/tfModels/modelLoader.js';
 
+export const subWorkerTopLevelAlphaBetaSetters = {};
+
 const getMoveEvaluator = async ({ board, lmf, lmt, predict }) => {
   const response = await predict({ game: { board, lmf, lmt, wNext: board[64] } });
 
@@ -13,26 +15,33 @@ const getMoveEvaluator = async ({ board, lmf, lmt, predict }) => {
   return moveEvaluator;
 };
 
-export const minimax = async ({
-  board,
-  depth,
-  alpha,
-  beta,
-  valueToAdd = 0,
-  deepMoveSorters = [],
-  lmf,
-  lmt,
-  wantsToDraw,
-  move: parentMove,
-}) => {
+export const minimax = async (
+  { board, depth, alpha, beta, valueToAdd = 0, deepMoveSorters = [], lmf, lmt, wantsToDraw },
+  id,
+) => {
+  if (id) {
+    subWorkerTopLevelAlphaBetaSetters[id] = {
+      setAlpha: (incomingAlpha) => {
+        alpha = Math.max(alpha, incomingAlpha);
+      },
+      setBeta: (incomingBeta) => {
+        beta = Math.min(beta, incomingBeta);
+      },
+    };
+  }
+
   if (deepMoveSorters.length === 0) {
     const [error, val] = await (await getWasmEngine()).minimax(board, depth, alpha, beta, valueToAdd);
     if (error) throw false;
+
+    delete subWorkerTopLevelAlphaBetaSetters[id];
     return val;
   }
-  if (parentMove === 12612 || parentMove === 12228) console.log(1, parentMove);
 
-  if (depth === 0) return evaluateBoard(board) + valueToAdd;
+  if (depth === 0) {
+    delete subWorkerTopLevelAlphaBetaSetters[id];
+    return evaluateBoard(board) + valueToAdd;
+  }
 
   const moves = generatePseudoMovesThrowMethod(board);
   const _movesss = JSON.stringify(moves);
@@ -80,6 +89,7 @@ export const minimax = async ({
         if (value >= beta) break;
         alpha = Math.max(alpha, value);
       } catch (e) {
+        delete subWorkerTopLevelAlphaBetaSetters[id];
         if (e) throw e;
       }
     }
@@ -89,9 +99,10 @@ export const minimax = async ({
       value === -99999 - depth &&
       !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64])
     ) {
-      console.log('itt');
+      delete subWorkerTopLevelAlphaBetaSetters[id];
       return 99999;
     }
+    delete subWorkerTopLevelAlphaBetaSetters[id];
 
     return value;
   }
@@ -120,13 +131,16 @@ export const minimax = async ({
       if (value <= alpha) break;
       beta = Math.min(beta, value);
     } catch (e) {
+      delete subWorkerTopLevelAlphaBetaSetters[id];
       if (e) throw e;
     }
   }
 
   if (!wantsToDraw && value === 99999 + depth && !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64])) {
+    delete subWorkerTopLevelAlphaBetaSetters[id];
     return -99999;
   }
 
+  delete subWorkerTopLevelAlphaBetaSetters[id];
   return value;
 };
