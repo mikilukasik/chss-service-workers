@@ -13,8 +13,6 @@ const getNextAvailableSubWorker = () =>
   });
 
 export const connectSubWorker = async (data, id, ports) => {
-  console.log('connecting to subWorker', { data, id, ports });
-
   subWorkers.push(
     ...ports.map((port) => {
       const waitingResolvers = {};
