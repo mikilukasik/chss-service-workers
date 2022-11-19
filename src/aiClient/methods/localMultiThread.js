@@ -1,9 +1,9 @@
 import { move2moveString } from '../../../../chss-module-engine/src/engine_new/transformers/move2moveString.js';
 import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
 import { getBoardPieceBalance } from '../../../../chss-module-engine/src/engine_new/utils/getBoardPieceBalance.js';
-import { msgClient } from '../../../msg/src/client';
 import { getUpdatedLmfLmt } from '../../../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js';
 import { doOnSubWorker } from './connectSubWorker.js';
+import { engineSocket } from '../engineSocket.js';
 
 const cutoff = 0.0001;
 const modelName = 'pg_large';
@@ -13,8 +13,6 @@ const deepMoveSorters = [
   { modelName: 'pg_small', cutoff: 0 /*, cutoff: 0.042*/ },
   { modelName: 'pg_tiny', cutoff: 0 /*, cutoff: 0.042*/ },
 ];
-
-const engineSocket = msgClient.ws(`ws://${self.location.hostname}:3300/engineSocket`);
 
 export const getMoveEvaluator = async ({ game }) => {
   const response = await engineSocket.do('predictMove', { game, modelName });

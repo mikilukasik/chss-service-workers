@@ -1,3 +1,7 @@
+import { engineSocket } from '../engineSocket.js';
+import { minimax } from '../methods/minimax.js';
+import { setAlpha } from '../methods/setAlpha.js';
+import { setBeta } from '../methods/setBeta.js';
 import { subMethods } from '../methods/subMethods.js';
 
 onmessage = async ({ data: rawData, ports }) => {
@@ -14,3 +18,18 @@ onmessage = async ({ data: rawData, ports }) => {
     postMessage({ id, error });
   }
 };
+
+engineSocket.on('init', (data, comms) => {
+  return comms.send('ok');
+});
+
+const setAlphaBetaHandlers = {
+  setAlpha,
+  setBeta,
+};
+
+engineSocket.on('minimax', async (data, comms) => {
+  comms.onData(({ cmd, data, id }) => setAlphaBetaHandlers[cmd](data, id));
+  const result = await minimax(data, comms.conversationId);
+  return comms.send(result);
+});

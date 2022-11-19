@@ -4,9 +4,13 @@ import { getUpdatedLmfLmt } from '../../../chss-module-engine/src/engine_new/uti
 import { getWasmEngine } from '../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
 import { getMovedBoard } from '../../../chss-module-engine/src/engine_new/utils/getMovedBoard.js';
 import { isCaptured } from '../../../chss-module-engine/src/engine_new/utils/isCaptured.js';
-import { getPrediction } from '../../../chss-module-engine/src/engine_new/tfModels/modelLoader.js';
+import { getPrediction as gp } from '../../../chss-module-engine/src/engine_new/tfModels/modelLoader.js';
+import { doOnMainWorker } from './connectMainWorker.js';
 
 export const subWorkerTopLevelAlphaBetaSetters = {};
+
+const getPrediction = async (input) =>
+  input.worker === 'main' ? (await doOnMainWorker('predict', input)).data : gp(input);
 
 const getMoveEvaluator = async ({ board, lmf, lmt, predict }) => {
   const response = await predict({ game: { board, lmf, lmt, wNext: board[64] } });
@@ -19,6 +23,8 @@ export const minimax = async (
   { board, depth, alpha, beta, valueToAdd = 0, deepMoveSorters = [], lmf, lmt, wantsToDraw },
   id,
 ) => {
+  let aborted = false;
+
   if (id) {
     subWorkerTopLevelAlphaBetaSetters[id] = {
       setAlpha: (incomingAlpha) => {
@@ -26,6 +32,9 @@ export const minimax = async (
       },
       setBeta: (incomingBeta) => {
         beta = Math.min(beta, incomingBeta);
+      },
+      abort: () => {
+        aborted = true;
       },
     };
   }
@@ -44,7 +53,7 @@ export const minimax = async (
   }
 
   const moves = generatePseudoMovesThrowMethod(board);
-  const _movesss = JSON.stringify(moves);
+
   const moveEvaluator = await getMoveEvaluator({
     board,
     lmf,
@@ -64,9 +73,9 @@ export const minimax = async (
   if (board[64]) {
     let value = -99999 - depth;
 
-    if (sortedMoves.length === 0) console.log({ m: moves.map((e) => e), s: sortedMoves.map((e) => e), _movesss });
-
     for (const move of sortedMoves) {
+      if (aborted) break;
+
       const movedBoard = getMovedBoard(move, board);
       try {
         const nextLm = getUpdatedLmfLmt({ move, lmf, lmt });
@@ -110,6 +119,8 @@ export const minimax = async (
   let value = 99999 + depth;
 
   for (const move of sortedMoves) {
+    if (aborted) break;
+
     const movedBoard = getMovedBoard(move, board);
     try {
       const nextLm = getUpdatedLmfLmt({ move, lmf, lmt });
