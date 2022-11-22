@@ -1,4 +1,4 @@
-import { engineSocket } from '../engineSocket.js';
+import { engineSocket } from '../routes.js';
 import { minimax } from '../methods/minimax.js';
 import { setAlpha } from '../methods/setAlpha.js';
 import { setBeta } from '../methods/setBeta.js';

@@ -3,7 +3,7 @@ import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/uti
 import { getBoardPieceBalance } from '../../../../chss-module-engine/src/engine_new/utils/getBoardPieceBalance.js';
 import { getUpdatedLmfLmt } from '../../../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js';
 import { doOnSubWorker } from './connectSubWorker.js';
-import { engineSocket } from '../engineSocket.js';
+import { engineSocket } from '../routes.js';
 
 const cutoff = 0.0001;
 const modelName = 'pg_large';

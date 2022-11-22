@@ -2,7 +2,7 @@ import { minimax as minimaxJs } from '../../../../chss-module-engine/src/engine_
 import { move2moveString } from '../../../../chss-module-engine/src/engine_new/transformers/move2moveString.js';
 import { getWasmEngine } from '../../../../chss-module-engine/src/engine_new/utils/wasmEngine.js';
 import { getBoardPieceBalance } from '../../../../chss-module-engine/src/engine_new/utils/getBoardPieceBalance.js';
-import { engineSocket } from '../engineSocket.js';
+import { engineSocket } from '../routes.js';
 import { getUpdatedLmfLmt } from '../../../../chss-module-engine/src/engine_new/utils/getUpdatedLmfLmt.js';
 
 const cutoff = 0.0001;

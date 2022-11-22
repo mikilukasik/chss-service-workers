@@ -1,4 +1,4 @@
-import { engineSocket } from '../engineSocket.js';
+import { engineSocket } from '../routes.js';
 
 const aiMultiplier = 2;
 

@@ -4,3 +4,6 @@
 [submodule "chss-module-engine"]
 	path = chss-module-engine
 	url = git@github.com:mikilukasik/chss-module-engine.git
+[submodule "chss-module-logger"]
+	path = chss-module-logger
+	url = https://github.com/mikilukasik/chss-module-logger
