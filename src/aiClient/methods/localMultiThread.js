@@ -8,6 +8,7 @@ import { engineSocket } from '../routes.js';
 const cutoff = 0.0001;
 const modelName = 'pg_large';
 const aiMultiplier = 2;
+const repeatedFenPenality = 0.8;
 
 const deepMoveSorters = [
   { modelName: 'pg_small', cutoff: 0 /*, cutoff: 0.042*/ },
@@ -66,6 +67,7 @@ export const localMultiThread = async ({ depth, game }) => {
           lmt: nextLm.lmt,
           wantsToDraw: wantsToDraw,
           move,
+          repeatedFenPenality,
         };
         minimaxParamsArr.push(params);
 
@@ -116,6 +118,7 @@ export const localMultiThread = async ({ depth, game }) => {
         lmt: nextLm.lmt,
         wantsToDraw: wantsToDraw,
         move,
+        repeatedFenPenality,
       };
       minimaxParamsArr.push(params);
 
