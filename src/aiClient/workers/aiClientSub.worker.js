@@ -29,7 +29,11 @@ const setAlphaBetaHandlers = {
 };
 
 engineSocket.on('minimax', async (data, comms) => {
-  comms.onData(({ cmd, data, id }) => setAlphaBetaHandlers[cmd](data, id));
-  const result = await minimax(data, comms.conversationId);
+  comms.onData(({ cmd, data }) => setAlphaBetaHandlers[cmd](data, comms.conversationId));
+
+  // const updateGlobalAlpha = (value) => comms.data({ setAlpha: value });
+  // const updateGlobalBeta = (value) => comms.data({ setBeta: value });
+
+  const result = await minimax(data, comms.conversationId /*{ updateGlobalAlpha, updateGlobalBeta }*/);
   return comms.send(result);
 });

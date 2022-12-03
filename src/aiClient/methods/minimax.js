@@ -22,6 +22,7 @@ const getMoveEvaluator = async ({ board, lmf, lmt, predict }) => {
 export const minimax = async (
   { board, depth, alpha, beta, valueToAdd = 0, deepMoveSorters = [], lmf, lmt, wantsToDraw },
   id,
+  // { updateGlobalAlpha = () => {}, updateGlobalBeta = () => {} } = {},
 ) => {
   let aborted = false;
 
@@ -96,7 +97,11 @@ export const minimax = async (
         );
 
         if (value >= beta) break;
-        alpha = Math.max(alpha, value);
+
+        if (value > alpha) {
+          // updateGlobalBeta(value);
+          alpha = value;
+        }
       } catch (e) {
         delete subWorkerTopLevelAlphaBetaSetters[id];
         if (e) throw e;
@@ -140,7 +145,11 @@ export const minimax = async (
       );
 
       if (value <= alpha) break;
-      beta = Math.min(beta, value);
+
+      if (value < beta) {
+        // updateGlobalAlpha(value);
+        beta = value;
+      }
     } catch (e) {
       delete subWorkerTopLevelAlphaBetaSetters[id];
       if (e) throw e;
