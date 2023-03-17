@@ -25,16 +25,19 @@ export const minimax = async (
   // { updateGlobalAlpha = () => {}, updateGlobalBeta = () => {} } = {},
 ) => {
   let aborted = false;
-
+  // console.log(id);
   if (id) {
     subWorkerTopLevelAlphaBetaSetters[id] = {
       setAlpha: (incomingAlpha) => {
+        // console.log('subA', incomingAlpha);
         alpha = Math.max(alpha, incomingAlpha);
       },
       setBeta: (incomingBeta) => {
+        // console.log('subB', incomingBeta);
         beta = Math.min(beta, incomingBeta);
       },
       abort: () => {
+        // console.log('aborting in sub');
         aborted = true;
       },
     };
@@ -111,7 +114,8 @@ export const minimax = async (
     if (
       !wantsToDraw &&
       value === -99999 - depth &&
-      !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64])
+      !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64]) &&
+      !aborted
     ) {
       delete subWorkerTopLevelAlphaBetaSetters[id];
       return 99999;
@@ -156,7 +160,12 @@ export const minimax = async (
     }
   }
 
-  if (!wantsToDraw && value === 99999 + depth && !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64])) {
+  if (
+    !wantsToDraw &&
+    value === 99999 + depth &&
+    !isCaptured(board, board.indexOf(6 + (board[64] << 3)), board[64]) &&
+    !aborted
+  ) {
     delete subWorkerTopLevelAlphaBetaSetters[id];
     return -99999;
   }

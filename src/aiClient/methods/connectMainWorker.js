@@ -1,6 +1,7 @@
 import { minimax } from './minimax';
 import { setAlpha } from './setAlpha';
 import { setBeta } from './setBeta';
+import { abortSub as abort } from './abortSub';
 
 export const mainWorkers = [];
 
@@ -17,13 +18,20 @@ export const connectMainWorker = async (data, id, ports) => {
       minimax,
       setAlpha,
       setBeta,
+      abort,
     };
 
     port.onmessage = ({ data: { cmd, data, id } }) => {
       if (cmdHandlers[cmd].constructor.name === 'AsyncFunction')
-        return cmdHandlers[cmd](data, id).then((response) => {
-          if (response || typeof response !== 'undefined') port.postMessage({ cmd: 'response', id, data: response });
-        });
+        return cmdHandlers[cmd](data, id)
+          .then(
+            (response) => {
+              if (response || typeof response !== 'undefined')
+                port.postMessage({ cmd: 'response', id, data: response });
+            },
+            (error) => port.postMessage({ cmd: 'error', id, error }),
+          )
+          .catch(console.error);
 
       cmdHandlers[cmd](data, id);
     };

@@ -18,12 +18,25 @@ export const connectSubWorker = async (data, id, ports) => {
   subWorkers.push(
     ...ports.map((port) => {
       const waitingResolvers = {};
-      const subWorker = { port, busy: false, waitingResolvers };
+      const waitingErrorHandlers = {};
+      const subWorker = { port, busy: false, waitingResolvers, waitingErrorHandlers };
 
       const onMessageHandlers = {
         response: ({ id, data }) => {
           waitingResolvers[id]({ data, id });
           delete waitingResolvers[id];
+
+          const alreadyWaiting = subWorkerAwaiters.shift();
+          if (alreadyWaiting) {
+            alreadyWaiting(subWorker);
+            return;
+          }
+
+          subWorker.busy = false;
+        },
+        error: ({ id, error }) => {
+          waitingErrorHandlers[id](error);
+          delete waitingErrorHandlers[id];
 
           const alreadyWaiting = subWorkerAwaiters.shift();
           if (alreadyWaiting) {
@@ -82,5 +95,8 @@ export const doOnSubWorker = async (cmd, data, cb = () => {}) => {
 
   worker.port.postMessage({ cmd, data, id });
 
-  return new Promise((r) => (worker.waitingResolvers[id] = r));
+  return new Promise((res, rej) => {
+    worker.waitingResolvers[id] = res;
+    worker.waitingErrorHandlers[id] = rej;
+  });
 };
